@@ -9,10 +9,11 @@ import java.util.TreeMap;
 @Service
 public class IngredientService {
     private final Map<Integer, Ingredient> ingredients = new TreeMap<>();
-    private static int id = 0;
+    private static int id = 1;
 
-    public void addIngredient(Ingredient ingredient) {
+    public Ingredient addIngredient(Ingredient ingredient) {
         ingredients.put(id++, ingredient);
+        return ingredient;
     }
 
     public Ingredient getIngredientById(int id) {

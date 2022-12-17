@@ -9,7 +9,7 @@ import java.util.TreeMap;
 @Service
 public class RecipeService{
     private final Map<Integer, Recipe> recipes = new TreeMap<>();
-    private static int id = 0;
+    private static int id = 1;
 
     public Recipe addRecipe(Recipe recipe) {
         recipes.put(id++, recipe);
