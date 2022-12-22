@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 
 @RestController
-@RequestMapping("/ingredient")
+@RequestMapping("/ingredients")
 public class IngredientController {
 
     private final IngredientService ingredientService;
@@ -21,22 +21,22 @@ public class IngredientController {
         return this.ingredientService.addIngredient(ingredient);
     }
 
-    @PostMapping("/editIngredientById/{id}")
+    @PutMapping("{id}")
     public Ingredient editIngredientById(@PathVariable("id") int id, @RequestBody Ingredient ingredient) {
         return this.ingredientService.editIngredientById(id, ingredient);
     }
 
-    @GetMapping("/getIngredientById/{id}")
+    @GetMapping("{id}")
     public Ingredient getIngredientById(@PathVariable("id") int id) {
         return this.ingredientService.getIngredientById(id);
     }
 
-    @GetMapping("/allIngredients")
+    @GetMapping
     public Collection<Ingredient> getAllIngredients() {
         return this.ingredientService.getAllIngredients();
     }
 
-    @DeleteMapping("/removeIngredientById/{id}")
+    @DeleteMapping("{id}")
     public Ingredient removeIngredientById(@PathVariable("id") int id) {
         return this.ingredientService.removeIngredientById(id);
     }
