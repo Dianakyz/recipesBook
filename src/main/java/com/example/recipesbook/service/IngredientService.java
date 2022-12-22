@@ -1,8 +1,10 @@
 package com.example.recipesbook.service;
 
 import com.example.recipesbook.model.Ingredient;
+import com.example.recipesbook.model.Recipe;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -22,5 +24,24 @@ public class IngredientService {
         } else {
             throw new RuntimeException("Нет таких объектов");
         }
+    }
+
+    public Ingredient editIngredientById(int id, Ingredient ingredient) {
+        Ingredient serviceIngredient = ingredients.get(id);
+        if(serviceIngredient == null) {
+            throw new RuntimeException("Нет таких объектов");
+        }
+        serviceIngredient.setName(ingredient.getName());
+        serviceIngredient.setCount(ingredient.getCount());
+        serviceIngredient.setMeasureUnit(ingredient.getMeasureUnit());
+        return serviceIngredient;
+    }
+
+    public Ingredient removeIngredientById(int id) {
+        return ingredients.remove(id);
+    }
+
+    public Collection<Ingredient> getAllIngredients() {
+        return ingredients.values();
     }
 }
