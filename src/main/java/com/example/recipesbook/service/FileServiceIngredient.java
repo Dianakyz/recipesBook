@@ -8,19 +8,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Service
-public class FileServiceImpl implements FileService {
+public class FileServiceIngredient {
 
     @Value("${path.to.data.file}")
     private String dataFilePath;
 
-    @Value("${name.of.data.file}")
-    private String dataFileName;
+    @Value("${name2.of.data.file}")
+    private String dataFileNameIngredient;
 
-    @Override
     public boolean saveToFile(String json){
         try {
             cleanDataFile();
-            Files.writeString(Path.of(dataFilePath, dataFileName), json);
+            Files.writeString(Path.of(dataFilePath, dataFileNameIngredient), json);
             return true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -28,20 +27,18 @@ public class FileServiceImpl implements FileService {
         }
     }
 
-    @Override
     public String readFromFile() {
         try {
-            return Files.readString(Path.of(dataFilePath, dataFileName));
+            return Files.readString(Path.of(dataFilePath, dataFileNameIngredient));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
     }
 
-    @Override
     public boolean cleanDataFile() {
         try {
-            Path path = Path.of(dataFilePath, dataFileName);
+            Path path = Path.of(dataFilePath, dataFileNameIngredient);
             Files.deleteIfExists(path);
             Files.createFile(path);
             return true;
