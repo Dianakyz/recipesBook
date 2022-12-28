@@ -1,9 +1,11 @@
 package com.example.recipesbook.service;
 
 import com.example.recipesbook.model.Ingredient;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 
+@Service
 public interface IngredientService {
     Ingredient addIngredient(Ingredient ingredient);
 

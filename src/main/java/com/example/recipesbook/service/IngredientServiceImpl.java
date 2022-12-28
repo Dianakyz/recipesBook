@@ -2,6 +2,8 @@ package com.example.recipesbook.service;
 
 import com.example.recipesbook.model.Ingredient;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
@@ -15,6 +17,10 @@ public class IngredientServiceImpl implements IngredientService {
     public Ingredient addIngredient(Ingredient ingredient) {
         ingredients.put(id++, ingredient);
         return ingredient;
+    }
+
+    @PostConstruct
+    private void init() {
     }
 
     @Override
