@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
@@ -27,9 +28,9 @@ public class IngredientServiceImpl implements IngredientService {
         return ingredient;
     }
 
-//    @PostConstruct
-//    private void init() {
-//    }
+    @PostConstruct
+    private void init() {
+    }
 
     @Override
     public Ingredient getIngredientById(int id) {
