@@ -16,10 +16,10 @@ public class RecipeServiceImpl implements RecipeService {
     private final Map<Integer, Recipe> recipes = new TreeMap<>();
     private static int id = 1;
 
-    final private FileServiceRecipeImpl fileServiceRecipe;
+    final private FileService fileService;
 
     public RecipeServiceImpl(FileServiceRecipeImpl fileServiceRecipe) {
-        this.fileServiceRecipe = fileServiceRecipe;
+        this.fileService = fileServiceRecipe;
     }
 
     @Override
@@ -70,7 +70,7 @@ public class RecipeServiceImpl implements RecipeService {
     private void saveToFile() {
         try {
             String json = new ObjectMapper().writeValueAsString(recipes);
-            fileServiceRecipe.saveToFile(json);
+            fileService.saveToFile(json);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -78,7 +78,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     private void readFromFile() {
         try {
-            String json = fileServiceRecipe.readFromFile();
+            String json = fileService.readFromFile();
             new ObjectMapper().readValue(json, new TypeReference<Map<Integer, Recipe>>() {
             });
         } catch (JsonProcessingException e) {
