@@ -15,9 +15,9 @@ import java.util.TreeMap;
 public class IngredientServiceImpl implements IngredientService {
     private final Map<Integer, Ingredient> ingredients = new TreeMap<>();
     private static int id = 1;
-    final private FileServiceIngredient fileServiceIngredient;
+    final private FileServiceIngredientImpl fileServiceIngredient;
 
-    public IngredientServiceImpl(FileServiceIngredient fileServiceIngredient) {
+    public IngredientServiceImpl(FileServiceIngredientImpl fileServiceIngredient) {
         this.fileServiceIngredient = fileServiceIngredient;
     }
 

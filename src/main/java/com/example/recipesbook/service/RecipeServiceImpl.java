@@ -16,9 +16,9 @@ public class RecipeServiceImpl implements RecipeService {
     private final Map<Integer, Recipe> recipes = new TreeMap<>();
     private static int id = 1;
 
-    final private FileServiceRecipe fileServiceRecipe;
+    final private FileServiceRecipeImpl fileServiceRecipe;
 
-    public RecipeServiceImpl(FileServiceRecipe fileServiceRecipe) {
+    public RecipeServiceImpl(FileServiceRecipeImpl fileServiceRecipe) {
         this.fileServiceRecipe = fileServiceRecipe;
     }
 
