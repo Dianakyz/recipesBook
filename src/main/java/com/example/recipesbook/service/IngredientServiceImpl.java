@@ -15,10 +15,10 @@ import java.util.TreeMap;
 public class IngredientServiceImpl implements IngredientService {
     private final Map<Integer, Ingredient> ingredients = new TreeMap<>();
     private static int id = 1;
-    final private FileServiceIngredient fileServiceIngredient;
+    final private FileService fileService;
 
-    public IngredientServiceImpl(FileServiceIngredient fileServiceIngredient) {
-        this.fileServiceIngredient = fileServiceIngredient;
+    public IngredientServiceImpl(FileServiceIngredientImpl fileServiceIngredient) {
+        this.fileService = fileServiceIngredient;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class IngredientServiceImpl implements IngredientService {
     private void saveToFile() {
         try {
             String json = new ObjectMapper().writeValueAsString(ingredients);
-            fileServiceIngredient.saveToFile(json);
+            fileService.saveToFile(json);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -76,7 +76,7 @@ public class IngredientServiceImpl implements IngredientService {
 
     private void readFromFile() {
         try {
-            String json = fileServiceIngredient.readFromFile();
+            String json = fileService.readFromFile();
             new ObjectMapper().readValue(json, new TypeReference<Map<Integer, Ingredient>>() {
             });
         } catch (JsonProcessingException e) {
