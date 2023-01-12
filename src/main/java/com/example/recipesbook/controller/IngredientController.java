@@ -1,10 +1,13 @@
 package com.example.recipesbook.controller;
 
 import com.example.recipesbook.model.Ingredient;
-import com.example.recipesbook.service.IngredientServiceImpl;
+import com.example.recipesbook.service.IngredientService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,45 +15,96 @@ import java.util.Collection;
 
 @RestController
 @RequestMapping("/ingredients")
-@Tag(name = "Ингредиенты", description = "CRUD-операции и другие эндпоинты для работы с ингредиентами")
+@Tag(name = "Список ингредиентов", description = "CRUD-операции с ингредиентами кулинарных блюд.")
 public class IngredientController {
 
-    private final IngredientServiceImpl ingredientService;
+    private final IngredientService ingredientService;
 
-    public IngredientController(IngredientServiceImpl ingredientService) {
+    public IngredientController(IngredientService ingredientService) {
         this.ingredientService = ingredientService;
     }
-
-    @PostMapping
-    @Operation(summary = "Добавление ингредиента")
-    public ResponseEntity<?> addIngredient(@RequestBody Ingredient ingredient) {
-        if(StringUtils.isBlank(ingredient.getName())) {
-            return ResponseEntity.badRequest().body("Название не может быть пустым");
-        }
-        return ResponseEntity.ok(ingredientService.addIngredient(ingredient));
+    //------------------------------------------------------------------------
+    @PostMapping("/")
+    @Operation( summary = "Добавление ингредиента в Кулинарную книгу."    )
+    @ApiResponses( {
+            @ApiResponse( responseCode = "200",
+                    description = "Ингредиент добавлен успешно.",
+                    content = {  @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Ingredient.class)
+                    ) }
+            ),
+            @ApiResponse( responseCode = "500",
+                    description = "Ошибка сервера. Повторите попытку."  )
+    } )
+    public Ingredient creatIngredient(@RequestBody Ingredient ingredient) {
+        return this.ingredientService.addIngredient(ingredient);
     }
-
-    @PutMapping("{id}")
-    @Operation(summary = "Редактирование ингредиента", description = "Введите id ингредиента и необходимые изменения в формате j-son")
-    public Ingredient editIngredientById(@PathVariable("id") int id, @RequestBody Ingredient ingredient) {
-        return this.ingredientService.editIngredientById(id, ingredient);
-    }
-
-    @GetMapping("{id}")
-    @Operation(summary = "Поиск ингредиента по id")
-    public Ingredient getIngredientById(@PathVariable("id") int id) {
-        return this.ingredientService.getIngredientById(id);
-    }
-
-    @GetMapping
-    @Operation(summary = "Показать весь список ингредиентов")
-    public Collection<Ingredient> getAllIngredients() {
+    //-------------------------------------------------------------------------
+    @GetMapping("/")
+    @Operation( summary = "Просмотр всех ингредиентов Кулинарной книги."    )
+    @ApiResponses ( {
+            @ApiResponse ( responseCode = "200",
+                    description = "Запрос выполнен успешно.",
+                    content = {  @Content (mediaType = "application/json") }
+            ),
+            @ApiResponse( responseCode = "500",
+                    description = "Ошибка сервера. Повторите запрос."  )
+    } )
+    public Collection<Ingredient> getAllIngredient(){
         return this.ingredientService.getAllIngredients();
     }
-
-    @DeleteMapping("{id}")
-    @Operation(summary = "Удалить ингредиент по id")
+    //-------------------------------------------------------------------------
+    @GetMapping("/{id}")
+    @Operation( summary = "Просмотр ингредиента Кулинарной книги с указанным id."    )
+    @ApiResponses ( {
+            @ApiResponse ( responseCode = "200",
+                    description = "Запрос выполнен успешно.",
+                    content = {  @Content (mediaType = "application/json") }
+            ),
+            @ApiResponse( responseCode = "404",
+                    description = "Ингредиент c введённым id не найден."  ),
+            @ApiResponse( responseCode = "500",
+                    description = "Ошибка сервера. Повторите попытку."  )
+    } )
+    public Ingredient getTheIngredient(@PathVariable("id") Integer id) {
+        return this.ingredientService.getIngredientById(id);
+    }
+    //-------------------------------------------------------------------------
+    @DeleteMapping("/{id}")
+    @Operation( summary = "Удаление ингредиента Кулинарной книги с указанным id."    )
+    @ApiResponses ( {
+            @ApiResponse ( responseCode = "200",
+                    description = "Удаление выполнено успешно.",
+                    content = { @Content (mediaType = "application/json") }
+            ),
+            @ApiResponse( responseCode = "404",
+                    description = "Ингредиент c введённым id не найден."  ),
+            @ApiResponse( responseCode = "500",
+                    description = "Ошибка сервера. Повторите запрос."  )
+    } )
     public Ingredient removeIngredientById(@PathVariable("id") int id) {
         return this.ingredientService.removeIngredientById(id);
+    }
+    //--------------------------------------------------------------------------
+    @PutMapping("/{id}")
+    @Operation( summary = "Редактирование ингредиента Кулинарной книги с указанным id."    )
+    @ApiResponses ( {
+            @ApiResponse ( responseCode = "200",
+                    description = "Редактирование выполнено успешно.",
+                    content = {  @Content (mediaType = "application/json",
+                            schema = @Schema(implementation = Ingredient.class)
+                    )}
+            ),
+            @ApiResponse( responseCode = "404",
+                    description = "Ингредиент c введённым id не найден."  ),
+            @ApiResponse( responseCode = "500",
+                    description = "Ошибка сервера. Повторите запрос."  )
+    } )
+    public ResponseEntity<Ingredient> editRecipe(@PathVariable("id") Integer id, @RequestBody Ingredient ingredient) {
+        ingredient = ingredientService.editIngredientById(id,ingredient);
+        if (ingredient != null) {
+            return ResponseEntity.ok().build();
+        } else
+            return ResponseEntity.notFound().build();
     }
 }

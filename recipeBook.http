@@ -1,5 +1,5 @@
 ### Добавление рецепта 1
-POST http://localhost:8080/recipes
+POST http://localhost:8080/recipes/
 Content-Type: application/json
 
 {
@@ -38,7 +38,7 @@ Content-Type: application/json
 }
 
 ### Добавление рецепта 2
-POST http://localhost:8080/recipes
+POST http://localhost:8080/recipes/
 Content-Type: application/json
 
 {
@@ -138,13 +138,13 @@ DELETE http://localhost:8080/recipes/1
 
 
 ### Показать весь список рецептов
-GET http://localhost:8080/recipes
+GET http://localhost:8080/recipes/
 
 
 
 
 ### Добавление ингредиента 1
-POST http://localhost:8080/ingredients
+POST http://localhost:8080/ingredients/
 Content-Type: application/json
 
 {
@@ -154,7 +154,7 @@ Content-Type: application/json
 }
 
 ### Добавление ингредиента 2
-POST http://localhost:8080/ingredients
+POST http://localhost:8080/ingredients/
 Content-Type: application/json
 
 {
@@ -164,7 +164,7 @@ Content-Type: application/json
 }
 
 ### Добавление ингредиента 3
-POST http://localhost:8080/ingredients
+POST http://localhost:8080/ingredients/
 Content-Type: application/json
 
 {
@@ -191,4 +191,4 @@ DELETE http://localhost:8080/ingredients/1
 
 
 ### Показать весь список ингредиентов
-GET http://localhost:8080/ingredients
+GET http://localhost:8080/ingredients/

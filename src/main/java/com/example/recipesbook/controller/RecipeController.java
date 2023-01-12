@@ -1,55 +1,136 @@
 package com.example.recipesbook.controller;
 
 import com.example.recipesbook.model.Recipe;
-import com.example.recipesbook.service.RecipeServiceImpl;
+import com.example.recipesbook.service.RecipeService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 
 @RestController
 @RequestMapping("/recipes")
-@Tag(name = "Рецепты", description = "CRUD-операции и другие эндпоинты для работы с рецептами")
+@Tag(name = "Кулинарная книга", description = "CRUD-операции с рецептами приготовления блюд.")
 public class RecipeController {
-    private final RecipeServiceImpl recipesService;
 
-    public RecipeController(RecipeServiceImpl recipesService) {
-        this.recipesService = recipesService;
+    private final RecipeService recipeService;
+
+    public RecipeController(RecipeService recipeService) {
+        this.recipeService = recipeService;
     }
 
-    @PostMapping
-    @Operation(summary = "Добавление рецепта")
-    public ResponseEntity<?> addRecipe(@RequestBody Recipe recipe) {
-        if(StringUtils.isBlank(recipe.getName())) {
-            return ResponseEntity.badRequest().body("Название не может быть пустым");
-        }
-        return ResponseEntity.ok(recipesService.addRecipe(recipe));
+    //---------------------------------------------------------------------
+    @PostMapping("/")
+    @Operation( summary = "Добавление рецепта в Кулинарную книгу."    )
+    @ApiResponses ( {
+            @ApiResponse ( responseCode = "200",
+                    description = "Рецепт добавлен успешно.",
+                    content = {  @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Recipe.class)
+                    )}
+            ),
+            @ApiResponse( responseCode = "500",
+                    description = "Ошибка сервера. Повторите запрос."  )
+    } )
+    public Recipe creatRecipe(@RequestBody Recipe recipe) {
+        return this.recipeService.addRecipe(recipe);
     }
-
-    @PutMapping("{id}")
-    @Operation(summary = "Редактирование рецепта", description = "Введите id рецепта и необходимые изменения в формате j-son")
-    public Recipe editRecipeById(@PathVariable("id") int id, @RequestBody Recipe recipe) {
-        return this.recipesService.editRecipeById(id, recipe);
+    //-------------------------------------------------------------------------
+    @GetMapping("/")
+    @Operation( summary = "Просмотр всех рецептов Кулинарной книги."    )
+    @ApiResponses( {
+            @ApiResponse( responseCode = "200",
+                    description = "Запрос выполнен успешно.",
+                    content = {  @Content (mediaType = "application/json") }
+            ),
+            @ApiResponse( responseCode = "500",
+                    description = "Ошибка сервера. Повторите запрос."  )
+    } )
+    public Collection<Recipe> getAll(){
+        return this.recipeService.getAllRecipes();
     }
-
-    @GetMapping("{id}")
-    @Operation(summary = "Поиск рецепта по id")
-    public Recipe getRecipeById(@PathVariable("id") int id) {
-        return this.recipesService.getRecipeById(id);
+    //-------------------------------------------------------------------------------
+    @GetMapping("/{id}")    // Получение рецепта по id.
+    @Operation( summary = "Просмотр рецепта Кулинарной книги с указанным id."    )
+    @ApiResponses ( {
+            @ApiResponse ( responseCode = "200",
+                    description = "Запрос выполнен успешно.",
+                    content = {  @Content (mediaType = "application/json") }
+            ),
+            @ApiResponse( responseCode = "404",
+                    description = "Рецепт c введённым id не найден."  ),
+            @ApiResponse( responseCode = "500",
+                    description = "Ошибка сервера. Повторите запрос."  )
+    } )
+    public Recipe getRecipe(@PathVariable("id") Integer id){
+        return this.recipeService.getRecipeById(id);
     }
-
-    @GetMapping
-    @Operation(summary = "Показать весь список рецептов")
-    public Collection<Recipe> getAllRecipes() {
-        return this.recipesService.getAllRecipes();
-    }
-
-    @DeleteMapping("{id}")
-    @Operation(summary = "Удалить рецепт по id")
+    //-------------------------------------------------------------------------------
+    @DeleteMapping("/{id}")
+    @Operation( summary = "Удаление рецепта Кулинарной книги с указанным id."    )
+    @ApiResponses ( {
+            @ApiResponse ( responseCode = "200",
+                    description = "Удаление выполнено успешно.",
+                    content = { @Content (mediaType = "application/json") }
+            ),
+            @ApiResponse( responseCode = "404",
+                    description = "Рецепт c введённым id не найден."  ),
+            @ApiResponse( responseCode = "500",
+                    description = "Ошибка сервера. Повторите запрос."  )
+    } )
     public Recipe removeRecipeById(@PathVariable("id") int id) {
-        return this.recipesService.removeRecipeById(id);
+        return this.recipeService.removeRecipeById(id);
+    }
+    //-------------------------------------------------------------------------------
+    @PutMapping("/{id}")
+    @Operation( summary = "Редактирование рецепта Кулинарной книги с указанным id."    )
+    @ApiResponses ( {
+            @ApiResponse ( responseCode = "200",
+                    description = "Рецепт добавлен успешно.",
+                    content = {  @Content (mediaType = "application/json",
+                            schema = @Schema(implementation = Recipe.class)
+                    )}
+            ),
+            @ApiResponse( responseCode = "500",
+                    description = "Ошибка сервера. Повторите запрос."  )
+    } )
+    public ResponseEntity<Recipe> editRecipe(@PathVariable("id") Integer id, @RequestBody Recipe recipe) {
+        recipe = recipeService.editRecipeById(id,recipe);
+        if (recipe != null) {
+            return ResponseEntity.ok().build();
+        } else
+            return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/list")
+    @Operation( summary = "Скачать все рецепты из приложения в одном файле."    )
+    public ResponseEntity<Object> getListOfAllRecipes() {
+        try {
+            Path path = recipeService.createListOfAllRecipes();
+            if (Files.size(path) == 0) {
+                return ResponseEntity.noContent().build();
+            }
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(path.toFile()));
+            return ResponseEntity.ok()
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .contentLength(Files.size(path))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"ListOfAllRecipes.txt\"")
+                    .body(resource);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(e.toString());
+        }
     }
 }
