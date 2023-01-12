@@ -1,6 +1,7 @@
 package com.example.recipesbook.service;
 
 import java.io.File;
+import java.nio.file.Path;
 
 public interface FileService {
     boolean saveToFile(String json);
@@ -10,4 +11,6 @@ public interface FileService {
     File getDataFile();
 
     boolean cleanDataFile();
+
+    Path createTempFile(String suffix);
 }

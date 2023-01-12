@@ -55,4 +55,9 @@ public class FileServiceIngredientImpl implements FileService {
             return false;
         }
     }
+
+    @Override
+    public Path createTempFile(String suffix) {
+        return null;
+    }
 }

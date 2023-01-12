@@ -7,6 +7,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
@@ -49,13 +54,13 @@ public class RecipeServiceImpl implements RecipeService {
         if(serviceRecipe == null) {
             throw new RuntimeException("Нет таких объектов");
         }
-            serviceRecipe.setName(recipe.getName());
-            serviceRecipe.setCookingTime(recipe.getCookingTime());
-            serviceRecipe.setIngredients(recipe.getIngredients());
-            serviceRecipe.setInstruction(recipe.getInstruction());
-            saveToFile();
-            return serviceRecipe;
-        }
+        serviceRecipe.setName(recipe.getName());
+        serviceRecipe.setCookingTime(recipe.getCookingTime());
+        serviceRecipe.setIngredients(recipe.getIngredients());
+        serviceRecipe.setInstruction(recipe.getInstruction());
+        saveToFile();
+        return serviceRecipe;
+    }
 
     @Override
     public Recipe removeRecipeById(int id) {
@@ -84,5 +89,31 @@ public class RecipeServiceImpl implements RecipeService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public Path createListOfAllRecipes() {
+        Path path = fileService.createTempFile("listOfAllRecipes");
+        for (Recipe recipe: recipes.values()) {
+            try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.APPEND)){
+                writer.append(recipe.getName() + "\n");
+                writer.append("----------------------------------------------------" + "\n");
+                writer.append("Время приготовления: " + recipe.getCookingTime() + " мин."+ "\n");
+                writer.append("Ингредиенты:"+ "\n");
+                for (int i = 0; i < recipe.getIngredients().size(); i++) {
+                    writer.append((i+1) + ") " + recipe.getIngredients().get(i).getName() +
+                            " - " + recipe.getIngredients().get(i).getCount() +
+                            " " + recipe.getIngredients().get(i).getMeasureUnit()+ "\n");
+                }
+                writer.append("Инструкция приготовления:"+ "\n");
+                for (int j = 0; j < recipe.getInstruction().size(); j++) {
+                    writer.append(recipe.getInstruction().get(j)+ "\n");
+                }
+                writer.append("\n");
+            } catch (IOException e) {
+                e.printStackTrace();   //throw new RuntimeException(e);
+            }
+        }
+        return path;
     }
 }

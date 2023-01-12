@@ -15,12 +15,12 @@ public class FileServiceRecipeImpl implements FileService{
     private String dataFilePath;
 
     @Value("${name1.of.data.file}")
-    private String dataFileNameRecipe;
+    private String dataFileName;
 
     public boolean saveToFile(String json){
         try {
             cleanDataFile();
-            Files.writeString(Path.of(dataFilePath, dataFileNameRecipe), json);
+            Files.writeString(Path.of(dataFilePath, dataFileName), json);
             return true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -30,7 +30,7 @@ public class FileServiceRecipeImpl implements FileService{
 
     public String readFromFile() {
         try {
-            return Files.readString(Path.of(dataFilePath, dataFileNameRecipe));
+            return Files.readString(Path.of(dataFilePath, dataFileName));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -38,18 +38,27 @@ public class FileServiceRecipeImpl implements FileService{
 
     @Override
     public File getDataFile() {
-        return new File(dataFilePath + "/" + dataFileNameRecipe);
+        return new File(dataFilePath + "/" + dataFileName);
     }
 
     public boolean cleanDataFile() {
         try {
-            Path path = Path.of(dataFilePath, dataFileNameRecipe);
+            Path path = Path.of(dataFilePath, dataFileName);
             Files.deleteIfExists(path);
             Files.createFile(path);
             return true;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    @Override
+    public Path createTempFile (String suffix) {
+        try {
+            return Files.createTempFile(Path.of(dataFilePath), "tempFile", suffix);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
